@@ -15,7 +15,7 @@ router = APIRouter(
 def get_service_dependency(db: DBSession):
     customer_repo = CustomerRepository(db)
     account_repo = AccountRepository(db)
-    return AccountService(customer_repo, account_repo)
+    return AccountService(customer_repo, account_repo, db)
 
 ServiceDep = Annotated[AccountService, Depends(get_service_dependency)]
 
@@ -24,13 +24,14 @@ def create_account(
     account_payload: AccountCreate,
     service: ServiceDep
 ) -> AccountResponse:
-    account = service.add_account(account_payload)
+    account = service.create_account(account_payload)
     return AccountResponse.model_validate(account)
+
 
 @router.get("{account_id}", response_model=AccountResponse)
 def get_account(
     account_id: int,
     service: ServiceDep
 ) -> AccountResponse:
-    account = service.find_account(account_id)
+    account = service.get_account(account_id)
     return AccountResponse.model_validate(account)

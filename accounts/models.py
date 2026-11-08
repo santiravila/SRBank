@@ -17,7 +17,7 @@ class Account(Base):
     account_type: Mapped[AccountType] = mapped_column(
         SQLEnum(AccountType)
     )
-    balance: Mapped[float] = mapped_column(CheckConstraint("balance > 0"))
+    balance: Mapped[float] = mapped_column(CheckConstraint("balance >= 0"))
     password: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
@@ -25,6 +25,7 @@ class Account(Base):
 
     customer: Mapped["Customer"] = relationship(back_populates="accounts")
     transfers: Mapped[list["Transfer"]] = relationship(back_populates="account")
+
 
     def deposit(self, amount: float) -> None:
         if amount <= 0:

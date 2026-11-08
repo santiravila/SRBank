@@ -7,7 +7,7 @@ class TransferRepository:
 
     def save(self, transfer: Transfer):
         self.session.add(transfer)
-        self.session.commit()
+        self.session.flush()
         self.session.refresh(transfer)
 
         return transfer

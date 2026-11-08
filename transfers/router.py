@@ -14,7 +14,7 @@ router = APIRouter(
 def get_service_dep(db_session: DBSession):
     account_repo = AccountRepository(db_session)
     transfer_repo = TransferRepository(db_session)
-    return TransferService(account_repo, transfer_repo)
+    return TransferService(account_repo, transfer_repo, db_session)
 
 ServiceDep = Annotated[TransferService, Depends(get_service_dep)]
 
