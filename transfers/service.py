@@ -2,16 +2,18 @@ from common.enums import TransferType
 from .models import Transfer
 from accounts.repository import AccountRepository
 from sqlalchemy.orm import Session
+from .schema import TransferCreate
+from .repository import TransferRepository
 
 
 
 class TransferService:
-    def __init__(self, account_repo: AccountRepository, transfer_repo, session: Session):
+    def __init__(self, account_repo: AccountRepository, transfer_repo: TransferRepository, session: Session):
         self.account_repo = account_repo
         self.transfer_repo = transfer_repo
         self.session = session
 
-    def execute_transfer(self, transfer_payload) -> Transfer:
+    def execute_transfer(self, transfer_payload: TransferCreate, commit: bool = True) -> Transfer:
         try:
             # get account with account_id using account_repo to check it exists
             account = self.account_repo.get(transfer_payload.account_id)
@@ -32,7 +34,9 @@ class TransferService:
             saved_transfer = self.transfer_repo.save(transfer)
 
             # services commits entire unit of work.
-            self.session.commit()
+            if commit:
+                self.session.commit()
+                
             return saved_transfer
         
         except Exception:
